@@ -1,0 +1,19 @@
+{
+  "name": "musicmatcher",
+  "version": "1.0.0",
+  "description": "music app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hburns6/MusicMatcher.git"
+  },
+  "author": "Matthew",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hburns6/MusicMatcher/issues"
+  },
+  "homepage": "https://github.com/hburns6/MusicMatcher#readme"
+}
