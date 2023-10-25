@@ -9,5 +9,6 @@ block content
     table
         each p in playlist
             tr 
-                - var url =  p.items.external_urls.spotify
-                td: <iframe style="border-radius:12px" src=url width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                - var name =  p.name
+                td: #{name}
+                //td: <iframe style="border-radius:12px" src=url width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
