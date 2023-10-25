@@ -86,10 +86,15 @@ async function getData(endpoint) {
     const data = await getData('/recommendations?' + params);
     
     res.render("recommendation", {tracks: data.tracks})
-
-
-
  })
+
+ app.get("/playlist", async(req, res) => { 
+  
+    const playlist = await getData('/me/playlist?limit=5&offset=0');
+
+    res.render("playlist", {playlist: playlist});
+
+ });
 
 
 
