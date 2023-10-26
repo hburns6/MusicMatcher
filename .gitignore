@@ -1,3 +1,4 @@
 node_modules/
 package.json
 pack-lock.json
+package-lock.json
