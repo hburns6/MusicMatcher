@@ -6,6 +6,10 @@ block content
     h1 Welcome to MusicMatcher #{user.id}
     img(src= user.images[1].url, class='circular-image')
 
+    h2: a(href = 'playlist') My Playlists
+
+    h2: a(href = 'newplaylist') Create Playlist
+
     table
         each t in tracks
             tr 

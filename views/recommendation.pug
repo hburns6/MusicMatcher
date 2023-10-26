@@ -15,5 +15,5 @@ block content
                 
 
                 td #{artist_name}
-                td #{track_name}
+                td: a(href='/recommendations?artist=' + artist_id + '&track=' + track_id) #{track_name}
                 td: a(href=track_preview) Preview
