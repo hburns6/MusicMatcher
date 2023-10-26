@@ -93,6 +93,7 @@ async function getData(endpoint) {
     const playlist = await getData('/me/playlist?limit=5&offset=0');
 
     res.render("playlist", {playlist: playlist.items});
+    console.log(playlist);
 
  });
 
