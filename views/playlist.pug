@@ -7,8 +7,9 @@ block content
     
 
     table
-        each p in playlist
+        each p in playlist 
             tr 
                 - var name =  p.name
                 td #{p.name}
                 td: iframe(style="border-radius:12px" src=p.external_urls.spotify width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy")
+                td: a(href=p.external_urls.spotify) Link to Spotify Playlist
