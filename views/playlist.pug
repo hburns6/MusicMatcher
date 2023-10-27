@@ -3,7 +3,7 @@ extends layout.pug
 
 
 block content 
-    h1 saved playlist 
+    h1 Saved Playlist 
     
 
     table
@@ -12,4 +12,4 @@ block content
                 - var name =  p.name
                 td #{p.name}
                 td: iframe(style="border-radius:12px" src=p.external_urls.spotify width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy")
-                td: a(href=p.external_urls.spotify) Link to Spotify Playlist
+                td: a(href=p.external_urls.spotify class='link') Link to Spotify Playlist
