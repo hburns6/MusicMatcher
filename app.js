@@ -179,6 +179,7 @@ async function getData(endpoint) {
     }
 });
 
+// track recommendations
 async function getRecommendations(trackId) {
     try {
         const response = await fetch(`https://api.spotify.com/v1/recommendations?seed_tracks=${trackId}`, {
@@ -200,9 +201,114 @@ async function getRecommendations(trackId) {
     }
 }
 
+// get top artist
+async function getArtist() {
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/top/artists?time_range=long_term&limit=5&offset=0', {
+            method: "get",
+            headers: {
+                "Authorization": "Bearer " + global.access_token
+            }
+        });
 
+        if (response.ok) {
+            const data = await response.json();
+            return data.items;
+        } else {
+            const errorData = await response.json();
+            throw new Error(`Failed to fetch top artist. Status: ${response.status}, Error: ${JSON.stringify(errorData)}`);
+        }
+    } catch (error) {
+        throw new Error(`Error fetching top artist: ${error.message}`);
+    }
+}
 
+//  song recommendations based on top artist
+app.get("/newplaylistartist", async (req, res) => {
+    try {
 
+         // Get the user's Spotify ID
+        const spotifyUserId = await getUserProfile(global.access_token);
+        
+        // Get the user's 5 most listened to artist
+        const topArtist = await getArtist();
+
+        // get list of artist IDs
+        const artistList = topArtist.items.ArtistObject[0].id + "%2C" + topArtist.items.ArtistObject[1].id + "%2C" + topArtist.items.ArtistObject[2].id + "%2C" + topArtist.items.ArtistObject[3].id + "%2C" + topArtist.items.ArtistObject[4].id;
+
+        // Get song recommendations based on the artist IDs
+        const recommendations = await getRecommendationsArtist(artistList);
+
+        // Create an empty playlist
+        const playlistResponse = await fetch('https://api.spotify.com/v1/users/' + spotifyUserId +'/playlists', {
+            method: "post",
+            headers: {
+                "Content-type": "application/json",
+                "Authorization": "Bearer " + global.access_token,
+            },
+            body: JSON.stringify({
+                "name": "Recs from Top Artist",
+                "description": "New Playlist from MusicMatcher - Based on your most played artist",
+                "public": false
+            })
+        });
+
+        if (playlistResponse.ok) {
+            const playlistData = await playlistResponse.json();
+            
+            // Extract the playlist ID from the response
+            const playlistId = playlistData.id;
+
+            // Add recommended tracks to the playlist
+            const addTracksResponse = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+                method: "post",
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": "Bearer " + global.access_token,
+                },
+                body: JSON.stringify({
+                    uris: recommendations.map(track => track.uri)
+                })
+            });
+
+            if (addTracksResponse.ok) {
+                res.render("newplaylist", { playlist: playlistData });
+                console.log("Playlist created successfully:", playlistData);
+            } else {
+                const errorData = await addTracksResponse.json();
+                throw new Error(`Failed to add tracks to the playlist. Status: ${addTracksResponse.status}, Error: ${JSON.stringify(errorData)}`);
+            }
+        } else {
+            const errorData = await playlistResponse.json();
+            throw new Error(`Failed to create playlist. Status: ${playlistResponse.status}, Error: ${JSON.stringify(errorData)}`);
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error creating playlist");
+    }
+});
+
+//recommendations based on top artist list
+async function getRecommendationsArtist(artistIDs) {
+    try {
+        const response = await fetch(`https://api.spotify.com/v1/recommendations?seed_artists=${artistIDs}`, {
+            method: "get",
+            headers: {
+                "Authorization": "Bearer " + global.access_token
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data.tracks;
+        } else {
+            const errorData = await response.json();
+            throw new Error(`Failed to fetch recommendations. Status: ${response.status}, Error: ${JSON.stringify(errorData)}`);
+        }
+    } catch (error) {
+        throw new Error(`Error fetching recommendations from artist: ${error.message}`);
+    }
+}
 
 
 let listener = app.listen(3000, function () {
