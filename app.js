@@ -22,7 +22,7 @@ app.get("/authorize", (req, res) => {
    var auth_query_parameters = new URLSearchParams ({
     response_type: "code",
     client_id: client_id,
-    scope: "user-library-read, playlist-read-private, playlist-modify-public, playlist-modify-private",
+    scope: "user-library-read, playlist-read-private, playlist-modify-public, playlist-modify-private, user-top-read",
     redirect_uri: redirect_uri
   }) 
 
@@ -202,9 +202,10 @@ async function getRecommendations(trackId) {
 }
 
 // get top artist
+
 async function getArtist() {
     try {
-        const response = await fetch('https://api.spotify.com/v1/me/top/artists?time_range=long_term&limit=5&offset=0', {
+        const response = await fetch('https://api.spotify.com/v1/me/top/artists?&limit=5&offset=0', {
             method: "get",
             headers: {
                 "Authorization": "Bearer " + global.access_token
@@ -231,10 +232,10 @@ app.get("/newplaylistartist", async (req, res) => {
         const spotifyUserId = await getUserProfile(global.access_token);
         
         // Get the user's 5 most listened to artist
-        const topArtist = await getArtist();
-
+        const topArtist = await getData('/me/top/artists?time_range=long_term&limit=5&offset=0');
+        console.log(topArtist);
         // get list of artist IDs
-        const artistList = topArtist.items.ArtistObject[0].id + "%2C" + topArtist.items.ArtistObject[1].id + "%2C" + topArtist.items.ArtistObject[2].id + "%2C" + topArtist.items.ArtistObject[3].id + "%2C" + topArtist.items.ArtistObject[4].id;
+        const artistList = topArtist.items[0].id + "%2C" + topArtist.items[1].id + "%2C" + topArtist.items[2].id + "%2C" + topArtist.items[3].id + "%2C" + topArtist.items[4].id;
 
         // Get song recommendations based on the artist IDs
         const recommendations = await getRecommendationsArtist(artistList);
