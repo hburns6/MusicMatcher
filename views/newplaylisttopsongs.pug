@@ -1,0 +1,18 @@
+extends layout
+
+block content
+    h1 Playlist Created
+    h2 Playlist Details:
+    ul
+        li Name: #{playlist.name}
+        li Description: #{playlist.description}
+        li Public: #{playlist.public ? 'Yes' : 'No'}
+        li ID: #{playlist.id}
+
+    h3 Your Top songs:
+    table
+        each s in songs 
+            tr 
+                - var name =  s.name
+                td #{s.name}
+

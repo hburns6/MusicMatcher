@@ -250,7 +250,7 @@ app.get("/newplaylistartist", async (req, res) => {
           Authorization: "Bearer " + global.access_token,
         },
         body: JSON.stringify({
-          name: "Recs from Top Artist",
+          name: "Recs from most listened to Artist",
           description:
             "New Playlist from MusicMatcher - Based on your most played artist",
           public: false,
@@ -331,6 +331,127 @@ async function getRecommendationsArtist(artistIDs) {
   } catch (error) {
     throw new Error(
       `Error fetching recommendations from artist: ${error.message}`
+    );
+  }
+}
+
+//  song recommendations based on top songs
+app.get("/newplaylistsongs", async (req, res) => {
+  try {
+    // Get the user's Spotify ID
+    const spotifyUserId = await getUserProfile(global.access_token);
+
+    // Get the user's 5 most listened to artist
+    const topSong = await getData(
+      "/me/top/tracks?time_range=medium_term&limit=5&offset=0"
+    );
+
+    // get list of song IDs
+    const songList =
+      topSong.items[0].id +
+      "%2C" +
+      topSong.items[1].id +
+      "%2C" +
+      topSong.items[2].id +
+      "%2C" +
+      topSong.items[3].id +
+      "%2C" +
+      topSong.items[4].id;
+
+    // Get song recommendations based on the artist IDs
+    const recommendations = await getRecommendationsSong(songList);
+
+    // Create an empty playlist
+    const playlistResponse = await fetch(
+      "https://api.spotify.com/v1/users/" + spotifyUserId + "/playlists",
+      {
+        method: "post",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: "Bearer " + global.access_token,
+        },
+        body: JSON.stringify({
+          name: "Recs from most listened to Songs",
+          description:
+            "New Playlist from MusicMatcher - Based on your most played songs",
+          public: false,
+        }),
+      }
+    );
+
+    if (playlistResponse.ok) {
+      const playlistData = await playlistResponse.json();
+
+      // Extract the playlist ID from the response
+      const playlistId = playlistData.id;
+
+      // Add recommended tracks to the playlist
+      const addTracksResponse = await fetch(
+        `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+        {
+          method: "post",
+          headers: {
+            "Content-type": "application/json",
+            Authorization: "Bearer " + global.access_token,
+          },
+          body: JSON.stringify({
+            uris: recommendations.map((track) => track.uri),
+          }),
+        }
+      );
+
+      if (addTracksResponse.ok) {
+        res.render("newplaylisttopsongs", { playlist: playlistData, songs: topSong.items });
+        console.log("Playlist created successfully:", playlistData);
+      } else {
+        const errorData = await addTracksResponse.json();
+        throw new Error(
+          `Failed to add tracks to the playlist. Status: ${
+            addTracksResponse.status
+          }, Error: ${JSON.stringify(errorData)}`
+        );
+      }
+    } else {
+      const errorData = await playlistResponse.json();
+      throw new Error(
+        `Failed to create playlist. Status: ${
+          playlistResponse.status
+        }, Error: ${JSON.stringify(errorData)}`
+      );
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error creating playlist");
+  }
+});
+
+//recommendations based on top song list
+async function getRecommendationsSong(songIDs) {
+  try {
+    const response = await fetch(
+      `https://api.spotify.com/v1/recommendations?seed_tracks=${songIDs}`,
+      {
+        method: "get",
+        headers: {
+          Authorization: "Bearer " + global.access_token,
+        },
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      return data.tracks;
+    } else {
+      const errorData = await response.json();
+      throw new Error(
+        `Failed to fetch recommendations. Status: ${
+          response.status
+        }, Error: ${JSON.stringify(errorData)}`
+      );
+    }
+  } catch (error) {
+    throw new Error(
+      `Error fetching recommendations from songs: ${error.message}`
     );
   }
 }

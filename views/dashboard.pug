@@ -10,7 +10,9 @@ block content
 
     h2: a(href = 'newplaylist' class='btn') Create Playlist
 
-    h2: a(href = 'newplaylistartist' class='btn') Create Playlist Based on Top Artist
+    h2: a(href = 'newplaylistartist' class='btn') Create Playlist Based on Most Played Artist
+
+    h2: a(href = 'newplaylistsongs' class='btn') Create Playlist Based on Most Played Songs
 
     form(action='/search' method='get')
         input(type='text' name='query' placeholder='Search playlists...' required)
