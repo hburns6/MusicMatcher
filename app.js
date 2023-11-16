@@ -214,36 +214,6 @@ async function getRecommendations(trackId) {
   }
 }
 
-// get top artist
-
-async function getArtist() {
-  try {
-    const response = await fetch(
-      "https://api.spotify.com/v1/me/top/artists?&limit=5&offset=0",
-      {
-        method: "get",
-        headers: {
-          Authorization: "Bearer " + global.access_token,
-        },
-      }
-    );
-
-    if (response.ok) {
-      const data = await response.json();
-      return data.items;
-    } else {
-      const errorData = await response.json();
-      throw new Error(
-        `Failed to fetch top artist. Status: ${
-          response.status
-        }, Error: ${JSON.stringify(errorData)}`
-      );
-    }
-  } catch (error) {
-    throw new Error(`Error fetching top artist: ${error.message}`);
-  }
-}
-
 //  song recommendations based on top artist
 app.get("/newplaylistartist", async (req, res) => {
   try {
@@ -310,7 +280,7 @@ app.get("/newplaylistartist", async (req, res) => {
       );
 
       if (addTracksResponse.ok) {
-        res.render("newplaylist", { playlist: playlistData });
+        res.render("newplaylistartist", { playlist: playlistData, artist: topArtist.items });
         console.log("Playlist created successfully:", playlistData);
       } else {
         const errorData = await addTracksResponse.json();

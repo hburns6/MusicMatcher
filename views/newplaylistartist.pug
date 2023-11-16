@@ -9,4 +9,10 @@ block content
         li Public: #{playlist.public ? 'Yes' : 'No'}
         li ID: #{playlist.id}
 
+    h3 Your Top Artist:
+    table
+        each a in artist 
+            tr 
+                - var name =  a.name
+                td #{a.name}
 
