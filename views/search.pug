@@ -1,0 +1,12 @@
+extends layout.pug
+
+block content
+    h1 Search Results for "#{query}"
+    if playlists.length > 0
+        table
+            each playlist in playlists
+                tr
+                    td #{playlist.name}
+                    td #{playlist.description}
+    else
+        p No matching playlists found.
