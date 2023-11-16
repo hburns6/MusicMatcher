@@ -232,8 +232,8 @@ app.get("/newplaylistartist", async (req, res) => {
         const spotifyUserId = await getUserProfile(global.access_token);
         
         // Get the user's 5 most listened to artist
-        const topArtist = await getData('/me/top/artists?time_range=long_term&limit=5&offset=0');
-        
+        const topArtist = await getData('/me/top/artists?time_range=medium_term&limit=5&offset=0');
+
         // get list of artist IDs
         const artistList = topArtist.items[0].id + "%2C" + topArtist.items[1].id + "%2C" + topArtist.items[2].id + "%2C" + topArtist.items[3].id + "%2C" + topArtist.items[4].id;
 
