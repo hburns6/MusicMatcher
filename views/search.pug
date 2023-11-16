@@ -7,6 +7,6 @@ block content
             each playlist in playlists
                 tr
                     td= playlist.name
-                    td= playlist.description ? playlist.description : 'No description available'
+                    td: a(href=playlist.external_urls.spotify class='link') Link to Spotify Playlist
     else
         p No matching playlists found.
