@@ -373,11 +373,44 @@ app.get("/search", async (req, res) => {
   res.render("search", { playlists: matchingPlaylists, query });
 });
 
-// Define a function to search for playlists
-async function searchPlaylists(query) {
-  return [];
+// Define a function to get user's playlists
+async function getUserPlaylists() {
+  try {
+    const playlists = await getData("/me/playlists?limit=50&offset=0");
+    
+    return playlists.items || []; 
+  } catch (err) {
+    console.error('Error fetching user playlists:', err);
+    return []; 
+  }
 }
 
+// Define a function to search for playlists
+async function searchPlaylists(query) {
+  try {
+    const playlists = await getUserPlaylists();
+    
+    const filteredPlaylists = playlists.filter(playlist =>
+      playlist.name.toLowerCase().includes(query.toLowerCase())
+    );  
+    return filteredPlaylists;
+  } catch (err) {
+    console.error('Error searching playlists:', err);
+    return []; // Return an empty array in case of an error
+  }
+
+  
+}
+
+app.get('/search', async (req, res) => {
+  const query = req.query.q; 
+  
+  // Call the searchPlaylists function passing the query
+  const playlists = await searchPlaylists(query);
+  
+  // Render the search.pug template with the playlists data
+  res.render('search', { query, playlists });
+});
 let listener = app.listen(3000, function () {
   console.log(
     "your app is listening on http://localhost:" + listener.address().port
