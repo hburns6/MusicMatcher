@@ -1,4 +1,6 @@
 const express = require("express");
+const session = require('express-session');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -6,6 +8,18 @@ app.set("views", "./views");
 app.set("view engine", "pug");
 
 app.use(express.static("public"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Initialize express-session middleware
+app.use(
+  session({
+    secret: 'yourSecretKey', // Change this to a secret string
+    resave: false,
+    saveUninitialized: true
+  })
+);
+
 
 const redirect_uri = "http://localhost:3000/callback";
 const client_id = "33c3a45c1db24e6aa74fe79b268eadfb";
@@ -107,8 +121,36 @@ async function getUserProfile(access_token) {
   }
 }
 
+// Route to render the settings page
+app.get('/settings', (req, res) => {
+  res.render('settings');
+});
+
+// Route to handle form submission from the settings page
+app.post('/settings', (req, res) => {
+  const { numOfSongs, tempo, energy } = req.body;
+
+ // Initialize req.session if it doesn't exist
+  req.session = req.session || {};
+
+  req.session.numOfSongs = numOfSongs;
+  req.session.tempo = tempo;
+  req.session.energy = energy;
+
+  console.log(req.session);
+
+  res.redirect('/dashboard'); // Redirect to the dashboard or any other page
+});
+
+
 app.get("/newplaylist", async (req, res) => {
   try {
+
+    const numOfSongs = req.session.numOfSongs || 20; // Default to 20 if not set
+    const tempo = req.session.tempo || null;
+    const energy = req.session.energy || null;
+
+
     // Get the user's Spotify ID
     const spotifyUserId = await getUserProfile(global.access_token);
 
@@ -119,7 +161,7 @@ app.get("/newplaylist", async (req, res) => {
     const firstTrackId = likedSongs.items[0].track.id;
 
     // Get song recommendations based on the first track ID
-    const recommendations = await getRecommendations(firstTrackId);
+    const recommendations = await getRecommendations(firstTrackId, numOfSongs, tempo, energy);
 
     // Create an empty playlist
     const playlistResponse = await fetch(
@@ -186,17 +228,24 @@ app.get("/newplaylist", async (req, res) => {
 });
 
 // track recommendations
-async function getRecommendations(trackId) {
+async function getRecommendations(trackId, numOfSongs, tempo, energy) {
   try {
-    const response = await fetch(
-      `https://api.spotify.com/v1/recommendations?seed_tracks=${trackId}&max_popularity=50`,
-      {
-        method: "get",
-        headers: {
-          Authorization: "Bearer " + global.access_token,
-        },
-      }
-    );
+    console.log(numOfSongs + '  ' + tempo + '  ' + energy);
+    let url = `https://api.spotify.com/v1/recommendations?seed_tracks=${trackId}&limit=${numOfSongs}`;
+    
+    if (tempo) {
+      url += `&target_tempo=${tempo}`;
+    }
+    if (energy) {
+      url += `&target_energy=${energy}`;
+    }
+
+    const response = await fetch(url, {
+      method: "get",
+      headers: {
+        Authorization: "Bearer " + global.access_token,
+      },
+    });
 
     if (response.ok) {
       const data = await response.json();
@@ -214,9 +263,15 @@ async function getRecommendations(trackId) {
   }
 }
 
+
 //  song recommendations based on top artist
 app.get("/newplaylistartist", async (req, res) => {
   try {
+
+    const numOfSongs = req.session.numOfSongs || 20; // Default to 20 if not set
+    const tempo = req.session.tempo || null;
+    const energy = req.session.energy || null;
+
     // Get the user's Spotify ID
     const spotifyUserId = await getUserProfile(global.access_token);
 
@@ -238,7 +293,7 @@ app.get("/newplaylistartist", async (req, res) => {
       topArtist.items[4].id;
 
     // Get song recommendations based on the artist IDs
-    const recommendations = await getRecommendationsArtist(artistList);
+    const recommendations = await getRecommendationsArtist(artistList, numOfSongs, tempo, energy);
 
     // Create an empty playlist
     const playlistResponse = await fetch(
@@ -305,10 +360,20 @@ app.get("/newplaylistartist", async (req, res) => {
 });
 
 //recommendations based on top artist list
-async function getRecommendationsArtist(artistIDs) {
+async function getRecommendationsArtist(artistIDs, numOfSongs, tempo, energy) {
   try {
+
+    let url = `https://api.spotify.com/v1/recommendations?seed_artists=${artistIDs}&limit=${numOfSongs}`;
+    
+    if (tempo) {
+      url += `&target_tempo=${tempo}`;
+    }
+    if (energy) {
+      url += `&target_energy=${energy}`;
+    }
+
     const response = await fetch(
-      `https://api.spotify.com/v1/recommendations?seed_artists=${artistIDs}&max_popularity=50`,
+      url,
       {
         method: "get",
         headers: {
@@ -338,6 +403,11 @@ async function getRecommendationsArtist(artistIDs) {
 //  song recommendations based on top songs
 app.get("/newplaylistsongs", async (req, res) => {
   try {
+
+    const numOfSongs = req.session.numOfSongs || 20; // Default to 20 if not set
+    const tempo = req.session.tempo || null;
+    const energy = req.session.energy || null;
+
     // Get the user's Spotify ID
     const spotifyUserId = await getUserProfile(global.access_token);
 
@@ -359,7 +429,7 @@ app.get("/newplaylistsongs", async (req, res) => {
       topSong.items[4].id;
 
     // Get song recommendations based on the artist IDs
-    const recommendations = await getRecommendationsSong(songList);
+    const recommendations = await getRecommendationsSong(songList, numOfSongs, tempo, energy);
 
     // Create an empty playlist
     const playlistResponse = await fetch(
@@ -426,10 +496,20 @@ app.get("/newplaylistsongs", async (req, res) => {
 });
 
 //recommendations based on top song list
-async function getRecommendationsSong(songIDs) {
+async function getRecommendationsSong(songIDs, numOfSongs, tempo, energy) {
   try {
+
+    let url = `https://api.spotify.com/v1/recommendations?seed_tracks=${songIDs}&max_popularity=50&limit=${numOfSongs}`;
+    
+    if (tempo) {
+      url += `&target_tempo=${tempo}`;
+    }
+    if (energy) {
+      url += `&target_energy=${energy}`;
+    }
+
     const response = await fetch(
-      `https://api.spotify.com/v1/recommendations?seed_tracks=${songIDs}&max_popularity=50`,
+      url,
       {
         method: "get",
         headers: {
@@ -501,9 +581,12 @@ app.get('/search', async (req, res) => {
   
   // Render the search.pug template with the playlists data
   res.render('search', { query, playlists });
+
+  
 });
-let listener = app.listen(3000, function () {
+const PORT = process.env.PORT || 3000;
+const server = app.listen(PORT, function () {
   console.log(
-    "your app is listening on http://localhost:" + listener.address().port
+    `Your app is listening on http://localhost:${server.address().port}`
   );
 });
