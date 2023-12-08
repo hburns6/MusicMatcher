@@ -58,11 +58,18 @@ td {
     border: 5px solid #f8bc54;
 }
 
+.welcome {
+    color: #f8bc54; 
+    position: relative;
+    top: 90px;
+    left: 200px;  
+}
+
 h1 {
     color: #f8bc54; 
     position: relative;
     top: 90px;
-    left: 200px;    
+    left: 390px;    
 }
 
 h2 {

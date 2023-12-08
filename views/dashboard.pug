@@ -3,7 +3,7 @@ extends layout.pug
 
 
 block content 
-    h1 Welcome to MusicMatcher, #{user.id}
+    h1(class='welcome') Welcome to MusicMatcher, #{user.id}
     img(src= user.images[1].url, class='circular-image')
     
     h2: a(href = 'playlist' class='btn') My Playlists     
