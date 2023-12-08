@@ -1,7 +1,10 @@
+* {
+    font-family: sans-serif;
+}
+
 body {
-    padding: 1em 2em;
-    background-image: linear-gradient(#545454, #121212);
-    color: #fff;
+    background: url('../image/musicmatcher-bg.png') no-repeat center center fixed;
+    background-size: cover;
 }
 
 ul.footer {
@@ -16,8 +19,15 @@ ul.footer li {
 
 table {
     font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(40,28,4, 0.7);
     border-collapse: collapse;
     width: auto;
+    color: #f8bc54; 
+    position: relative;
+    display: center;
+    top: 75px;
+    left: 30%;
+    font-size: 20px;
 }
 
 td {
@@ -27,25 +37,96 @@ td {
 }
 
 .circular-image {
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    height: 90px;
+    position: relative;
+    left: 40px;
     border-radius: 50%;
-    overflow: hidden;
-    float: left;
+    border: 5px solid #f8bc54;
+}
+
+h1 {
+    color: #f8bc54; 
+    position: relative;
+    top: 90px;
+    left: 200px;    
+}
+
+h2 {
+    position: relative;
+    display: inline;
+    padding: 10px 10px;
+    top: 50px;
+    width: 100%;
+}
+
+.playlist-details{
+    position: relative;
+    top: 150px;
+    width: 100%;
+    color: #f8bc54;
+    left: 20%;
+}
+
+ul {
+    position: relative;
+    top: 150px;
+    width: 100%;
+    color: #f8bc54;
+    left: 20%;
+}
+
+form {
+    /* max-width: 400px; */
+    position: relative;
+    display: flex;
+    top: 75px;
+    left: 30%;
+    width: 100%;
+}
+
+input {
+    width: 34.4%;
+    height: 30px;
+    font-size: 18px;
 }
 
 .btn {
     display: inline-block;
     padding: 10px 20px; 
-    background-color: darkgray; 
-    color: #fff; 
+    background-color: #f8bc54; 
+    color: #281c04; 
     text-decoration: none;
     font-weight: bold; 
     border-radius: 5px; 
     transition: background-color 0.3s;
+    text-align: center;
 
     &:hover {
-        background-color: black; 
+        background-color: #281c04; 
+        color: #f8bc54; 
+      }
+}
+
+.signin-btn {
+    display: inline-block;
+    padding: 10px 20px; 
+    background-color: #f8bc54; 
+    color: #281c04; 
+    text-decoration: none;
+    font-weight: bold; 
+    border-radius: 5px; 
+    border: 2px solid #281c04;
+    transition: background-color 0.3s;
+    position: absolute;
+    right: 125px;
+    top: 50px;
+    font-family: sans-serif;
+    font-size: 20px;
+
+    &:hover {
+        background-color: #281c04; 
+        color: #f8bc54; 
       }
 }
 
@@ -54,11 +135,15 @@ td {
   }
 
 .link {
-    color: #fff;
+    color: #f8bc54; 
     padding: 10px 10px;
     border-radius: 5px;
 
     &:hover {
-        background-color:rgba(0, 0, 0, 0.5); 
+        background-color:  #f8bc54; 
+        color: #281c04; 
       }
 }
+
+
+
