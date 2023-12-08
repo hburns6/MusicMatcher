@@ -189,7 +189,7 @@ app.get("/newplaylist", async (req, res) => {
 async function getRecommendations(trackId) {
   try {
     const response = await fetch(
-      `https://api.spotify.com/v1/recommendations?seed_tracks=${trackId}`,
+      `https://api.spotify.com/v1/recommendations?seed_tracks=${trackId}&max_popularity=50`,
       {
         method: "get",
         headers: {
@@ -308,7 +308,7 @@ app.get("/newplaylistartist", async (req, res) => {
 async function getRecommendationsArtist(artistIDs) {
   try {
     const response = await fetch(
-      `https://api.spotify.com/v1/recommendations?seed_artists=${artistIDs}`,
+      `https://api.spotify.com/v1/recommendations?seed_artists=${artistIDs}&max_popularity=50`,
       {
         method: "get",
         headers: {
@@ -429,7 +429,7 @@ app.get("/newplaylistsongs", async (req, res) => {
 async function getRecommendationsSong(songIDs) {
   try {
     const response = await fetch(
-      `https://api.spotify.com/v1/recommendations?seed_tracks=${songIDs}`,
+      `https://api.spotify.com/v1/recommendations?seed_tracks=${songIDs}&max_popularity=50`,
       {
         method: "get",
         headers: {
