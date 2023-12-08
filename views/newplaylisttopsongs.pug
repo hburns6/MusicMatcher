@@ -9,8 +9,8 @@ block content
         li Public: #{playlist.public ? 'Yes' : 'No'}
         li ID: #{playlist.id}
 
-    h3 Your Top songs:
-    table
+    h2(class='playlist-details') Your Top songs:
+    table(class='topSongs')
         each s in songs 
             tr 
                 - var name =  s.name

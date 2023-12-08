@@ -2,15 +2,15 @@ extends layout
 
 block content
     h1 Playlist Created
-    h2 Playlist Details:
+    h2(class='playlist-details') Playlist Details:
     ul
         li Name: #{playlist.name}
         li Description: #{playlist.description}
         li Public: #{playlist.public ? 'Yes' : 'No'}
         li ID: #{playlist.id}
 
-    h3 Your Top Artist:
-    table
+    h2(class='playlist-details') Your Top Artist:
+    table(class='topArtists')
         each a in artist 
             tr 
                 - var name =  a.name
