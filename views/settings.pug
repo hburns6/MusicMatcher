@@ -1,15 +1,16 @@
 extends layout.pug
 
 block content
-    h1 Settings
+    
     form(action='/settings' method='post' class='settings-container') 
-        label(for='numOfSongs') Number of Songs:
+        h3(class='settings-header') Settings
+        label(for='numOfSongs' class='settings-text') Number of Songs:
         input(type='number' name='numOfSongs' id='numOfSongs' value='20' required class='settings-input') 
         
-        label(for='tempo') Tempo:
+        label(for='tempo' class='settings-text') Tempo:
         input(type='number' name='tempo' id='tempo' min='0' max='200' value='120' class='settings-input') 
         
-        label(for='energy') Energy:
+        label(for='energy' class='settings-text') Energy:
         input(type='number' name='energy' id='energy' min='0' max='1' step='0.1' value='0.5' class='settings-input') 
         
         button(type='submit' class='settings-button') Apply Changes 
