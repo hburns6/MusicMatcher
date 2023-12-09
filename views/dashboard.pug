@@ -3,8 +3,12 @@ extends layout.pug
 
 
 block content 
-    h1(class='welcome') Welcome to MusicMatcher, #{user.id}
+    h1 Welcome to MusicMatcher, #{user.id}
+    
     img(src= user.images[1].url, class='circular-image')
+
+    form(class="settings-btn")
+        h2: a(href = 'settings' class='btn') Settings
     
     h2: a(href = 'playlist' class='btn') My Playlists     
 
@@ -13,11 +17,14 @@ block content
     h2: a(href = 'newplaylistartist' class='btn') Create Playlist Based on Most Played Artist
 
     h2: a(href = 'newplaylistsongs' class='btn') Create Playlist Based on Most Played Songs
-    h2: a(href = 'settings' class='btn') Settings
+    
 
     form(action='/search' method='get')
         input(type='text' name='query' placeholder='Search playlists...' required)
         button(type='submit') Search
+
+     
+    
 
     table
         each t in tracks
